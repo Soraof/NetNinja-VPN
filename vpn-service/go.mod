@@ -1,4 +1,5 @@
 module vpn-service
+//Sora
 
 go 1.21
 
