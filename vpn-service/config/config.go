@@ -36,4 +36,3 @@ func LoadConfig() *Config {
 		PersistentKeepalive: keepalive,
 	}
 }
-//Sora

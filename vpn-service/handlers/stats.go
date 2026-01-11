@@ -21,5 +21,3 @@ func GetPeerStats(c *gin.Context, wgMgr *wireguard.WGManager) {
 	}
 	c.JSON(http.StatusOK, StatsResponse{PublicKey: publicKey, RawStats: raw})
 }
-//Sora
-//Sora

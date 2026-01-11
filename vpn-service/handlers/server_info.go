@@ -19,4 +19,3 @@ func GetServerInfo(c *gin.Context, wgMgr *wireguard.WGManager) {
 	}
 	c.JSON(http.StatusOK, ServerInfoResponse{RawOutput: raw})
 }
-//Sora

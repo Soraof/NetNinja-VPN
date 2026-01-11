@@ -15,4 +15,3 @@ func DisablePeer(c *gin.Context, wgMgr *wireguard.WGManager) {
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Peer disabled"})
 }
-//Sora
