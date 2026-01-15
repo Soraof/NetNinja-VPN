@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Используем абсолютные импорты
 from core.confing import settings
 
-app = FastAPI(title="NetNinja VPN Backend")
+app = FastAPI(title="NetNinja VPN Backend, by Sora")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,11 +16,11 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"message": "NetNinja VPN Backend is running!", "status": "ok"}
+    return {"message": "NetNinja VPN Backend is running!", "status": "ok Sora)"}
 
 @app.post("/api/v1/auth")
 def authenticate_user():
-    return {"status": "authenticated", "message": "Welcome, ninja!"}
+    return {"status": "authenticated", "message": "Welcome, Sora)"}
 
 if __name__ == "__main__":
     import uvicorn
