@@ -1,6 +1,6 @@
 # backend/api/v1/payments.py
 from fastapi import APIRouter, Request, HTTPException
-from ...core.confing import settings
+from ...core.config import settings
 import hashlib
 import hmac
 import json

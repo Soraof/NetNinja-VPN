@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ...schemas.user import UserCreate, UserResponse
-from ...core.database import get_db
-from ...core.confing import settings  # Предполагаю, что ты имел в виду config, но если confing - то так и оставь
-from ...core.security import validate_telegram_webapp_data
+from ...core.database import get_db  # Используем core.database
+from ...core.config import settings  # Исправлено: config, а не confing
+from ...core.security import validate_telegram_webapp_data, parse_init_data
+from ...models.user import User
+import uuid
+import json
 
 router = APIRouter(prefix="/auth")
 
@@ -15,10 +18,39 @@ def get_db_session():
         db.close()
 
 @router.post("/")
-async def authenticate_user(init_data: str, db: Session = Depends(get_db_session)): # Исправлено: init_data: str
+async def authenticate_user(init_data: str, db: Session = Depends(get_db_session)):
     if not validate_telegram_webapp_data(init_data, settings.TG_BOT_TOKEN):
         raise HTTPException(status_code=401, detail="Invalid authentication")
-    
-    # Здесь будет логика обработки initData и создания/обновления пользователя
-    # Пока просто возвращаем успех
-    return {"status": "authenticated", "message": "Welcome, ninja!"} # return внутри тела функции - всё ок
+
+    # Парсим initData
+    user_data = parse_init_data(init_data)
+    if not user_data or 'user' not in user_data:
+        raise HTTPException(status_code=400, detail="No user data in init data")
+
+    # Telegram возвращает user в JSON-строке
+    import json
+    tg_user = json.loads(user_data['user'])
+
+    telegram_id = str(tg_user['id'])
+    username = tg_user.get('username')
+    first_name = tg_user.get('first_name')
+    last_name = tg_user.get('last_name')
+
+    # Проверяем, есть ли пользователь в БД
+    user = db.query(User).filter(User.telegram_id == telegram_id).first()
+    if not user:
+        # Создаём нового пользователя
+        referral_code = f"ref_{str(uuid.uuid4().hex[:8])}"
+        new_user = User(
+            telegram_id=telegram_id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            referral_code=referral_code
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        user = new_user
+
+    return {"status": "authenticated", "message": "Welcome, ninja!", "user_id": user.id}

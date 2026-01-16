@@ -2,7 +2,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from .confing import settings # Импорт внутри core/
+from .config import settings # Импорт внутри core/
 
 # Используем DATABASE_URL из конфига
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
