@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ...schemas.user import UserCreate, UserResponse
-from ...core.database import get_db  # Используем core.database
-from ...core.config import settings  # Исправлено: config, а не confing
-from ...core.security import validate_telegram_webapp_data, parse_init_data
-from ...models.user import User
+# Используем абсолютные импорты
+from schemas.user import UserCreate, UserResponse
+from core.database import get_db  # Используем services.database, но т.к. у нас get_db_session в том же файле, импортируем оттуда
+from core.config import settings
+from core.security import validate_telegram_webapp_data, parse_init_data
+from models.user import User
 import uuid
-import json
 
 router = APIRouter(prefix="/auth")
 

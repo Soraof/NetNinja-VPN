@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .core.config import settings
 
-# Импортируем роутеры
+# Используем абсолютные импорты
+from core.config import settings
+
+# Импортируем роутеры с абсолютными путями
 from api.v1.auth import router as auth_router
 from api.v1.user import router as user_router
 from api.v1.vpn import router as vpn_router
