@@ -1,8 +1,8 @@
 # backend/models/user.py
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
-from .base import Base # Импортируем Base из общего файла
-from datetime import datetime
+from .base import Base
+from datetime import datetime  # Импортируем datetime
 
 class User(Base):
     __tablename__ = "users"
@@ -14,8 +14,8 @@ class User(Base):
     last_name = Column(String, nullable=True)
     level = Column(Integer, default=1)  # 1-5 уровни ниндзя
     xp = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)  # Используем datetime.utcnow
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # onupdate может не работать с sqlite
     is_active = Column(Boolean, default=True)
     referral_code = Column(String, unique=True, index=True)
     referred_by = Column(String, nullable=True)  # telegram_id того, кто пригласил

@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from .base import Base
+from datetime import datetime  # Импортируем datetime
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
@@ -9,7 +10,7 @@ class Subscription(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     plan = Column(String, nullable=False)  # day, week, month, year
-    starts_at = Column(DateTime, default=DateTime.utcnow)
+    starts_at = Column(DateTime, default=datetime.utcnow)  # Используем datetime.utcnow
     expires_at = Column(DateTime, nullable=False)
     is_active = Column(Boolean, default=True)
 

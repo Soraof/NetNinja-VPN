@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ...schemas.user import UserResponse, UserUpdate
-from ...core.database import get_db
-from ...models.user import User
-from ...core.config import settings
+from schemas.user import UserResponse, UserUpdate 
+from core.database import get_db
+from models.user import User
+from core.config import settings
 from datetime import datetime
 from typing import Dict, Any
 
 router = APIRouter(prefix="/user", tags=["User"])
+
 
 def get_db_session():
     db = next(get_db())

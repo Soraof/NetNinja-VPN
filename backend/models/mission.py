@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Integer as SqlInt, ForeignKey
 from sqlalchemy.orm import relationship
 from .base import Base
-from datetime import datetime
+from datetime import datetime  # Импортируем datetime
 
 class Mission(Base):
     __tablename__ = "missions"
@@ -15,6 +15,6 @@ class Mission(Base):
     reward_stars = Column(SqlInt, default=0)
     completed_at = Column(DateTime, nullable=True)
     is_daily = Column(Boolean, default=False) # True для ежедневных миссий
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)  # Используем datetime.utcnow
 
     user = relationship("User", back_populates="missions")

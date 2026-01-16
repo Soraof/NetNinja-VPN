@@ -1,10 +1,10 @@
 # backend/api/v1/missions.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ...schemas.mission import MissionCreate, MissionResponse
-from ...core.database import get_db
-from ...models.mission import Mission
-from ...models.user import User
+from schemas.mission import MissionCreate, MissionResponse
+from core.database import get_db
+from models.mission import Mission
+from models.user import User
 from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/missions", tags=["Missions"])

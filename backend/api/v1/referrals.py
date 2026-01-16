@@ -1,18 +1,25 @@
 # backend/api/v1/referrals.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ...schemas.referral import ReferralCreate, ReferralResponse
-from ...core.database import get_db
-from ...models.referral import Referral
-from ...models.user import User
+# Используем абсолютные импорты
+from schemas.referral import ReferralCreate, ReferralResponse
+from core.database import get_db
+from models.referral import Referral
+from models.user import User
 from datetime import datetime
 import uuid
-from ...schemas.user import generate_referral_code # Предполагаем, что функция перенесена
 
 router = APIRouter(prefix="/referrals", tags=["Referrals"])
 
+def get_db_session():
+    db = next(get_db())
+    try:
+        yield db
+    finally:
+        db.close()
+
 @router.get("/{telegram_id}")
-async def get_referral_link(telegram_id: str, db: Session = Depends(get_db)):
+async def get_referral_link(telegram_id: str, db: Session = Depends(get_db_session)):
     """
     Получить реферальную ссылку пользователя.
     """
@@ -26,7 +33,7 @@ async def get_referral_link(telegram_id: str, db: Session = Depends(get_db)):
     return {"referral_url": referral_url}
 
 @router.post("/register") # Вызовется, когда новый пользователь регистрируется по ссылке
-async def register_referral(referrer_telegram_id: str, referee_telegram_id: str, db: Session = Depends(get_db)):
+async def register_referral(referrer_telegram_id: str, referee_telegram_id: str, db: Session = Depends(get_db_session)):
     """
     Зарегистрировать рефералку. Вызывается при регистрации нового пользователя.
     """
