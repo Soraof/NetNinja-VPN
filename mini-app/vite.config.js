@@ -1,25 +1,23 @@
+// vite.config.js
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-// https://vitejs.dev/config/
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 export default defineConfig({
+  root: resolve(__dirname),
+  publicDir: 'public', // ← относительный путь!
   plugins: [preact()],
   server: {
-    host: '0.0.0.0',  // ← Разрешить подключения с любых IP
-    port: 3001,       // ← Измени на 3001
-    cors: true,
-    strictPort: false, // ← Не паниковать, если порт занят
-    open: false,      // ← Не открывать браузер автоматически
-  },
-  resolve: {
-    alias: {
-      react: 'preact/compat',
-      'react-dom': 'preact/compat',
-    },
+    host: '127.0.0.1',
+    port: 3001,
+    open: true,
+    strictPort: true
   },
   build: {
-    outDir: 'dist',
-    minify: 'terser',
-    sourcemap: true
+    outDir: 'dist'
   }
 });
