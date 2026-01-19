@@ -1,24 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-# Используем абсолютные импорты
 from schemas.user import UserCreate, UserResponse
-from core.database import get_db  # Используем services.database, но т.к. у нас get_db_session в том же файле, импортируем оттуда
+from core.database import get_db  # Используем правильный путь
 from core.config import settings
 from core.security import validate_telegram_webapp_data, parse_init_data
 from models.user import User
 import uuid
+import json
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(tags=["Auth"])
 
-def get_db_session():
-    db = next(get_db())
-    try:
-        yield db
-    finally:
-        db.close()
-
-@router.post("/")
-async def authenticate_user(init_data: str, db: Session = Depends(get_db_session)):
+@router.post("/auth/")
+async def authenticate_user(init_data: str, db: Session = Depends(get_db)):
     if not validate_telegram_webapp_data(init_data, settings.TG_BOT_TOKEN):
         raise HTTPException(status_code=401, detail="Invalid authentication")
 
@@ -28,7 +21,6 @@ async def authenticate_user(init_data: str, db: Session = Depends(get_db_session
         raise HTTPException(status_code=400, detail="No user data in init data")
 
     # Telegram возвращает user в JSON-строке
-    import json
     tg_user = json.loads(user_data['user'])
 
     telegram_id = str(tg_user['id'])

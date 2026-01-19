@@ -11,7 +11,7 @@ from services.wg_client import WGClient
 from core.config import settings
 import os
 
-router = APIRouter(prefix="/vpn", tags=["VPN"])
+router = APIRouter(tags=["VPN"])
 
 wg_client = WGClient(settings.WG_ENDPOINT) # Инициализируем клиент
 

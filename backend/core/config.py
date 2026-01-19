@@ -1,17 +1,21 @@
+# core/config.py
 from pydantic_settings import BaseSettings
-import os
-from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+BASE_DIR = Path(__file__).parent.parent
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./netninja.db")
-    TG_BOT_TOKEN: str = os.getenv("TG_BOT_TOKEN", "")
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here")
-    WG_ENDPOINT: str = os.getenv("WG_ENDPOINT", "http://vpn-service:8080")
-    STARS_WEBHOOK_SECRET: str = os.getenv("STARS_WEBHOOK_SECRET", "")
-    YOOKASSA_SHOP_ID: str = os.getenv("YOOKASSA_SHOP_ID", "")
-    YOOKASSA_API_KEY: str = os.getenv("YOOKASSA_API_KEY", "")
-    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
+    DATABASE_URL: str = f"sqlite:///{BASE_DIR}/netninja.db"
+    TG_BOT_TOKEN: str
+    SECRET_KEY: str = "your-secret-key-here"
+    WG_ENDPOINT: str = "http://vpn-service:8080"
+    STARS_WEBHOOK_SECRET: str
+    YOOKASSA_SHOP_ID: str = ""
+    YOOKASSA_API_KEY: str = ""
+    REDIS_URL: str = "redis://localhost:6379"
+
+    class Config:
+        env_file = BASE_DIR / ".env"
+        env_file_encoding = "utf-8"
 
 settings = Settings()

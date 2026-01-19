@@ -9,7 +9,7 @@ import hmac
 import json
 from datetime import datetime, timedelta
 
-router = APIRouter(prefix="/payments", tags=["Payments"])
+router = APIRouter(tags=["Payments"])
 
 def get_db_session():
     """Получение сессии БД"""

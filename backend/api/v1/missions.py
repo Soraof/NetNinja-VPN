@@ -7,7 +7,7 @@ from models.mission import Mission
 from models.user import User
 from datetime import datetime, timedelta
 
-router = APIRouter(prefix="/missions", tags=["Missions"])
+router = APIRouter(tags=["Missions"])
 
 @router.get("/daily/{telegram_id}", response_model=list[MissionResponse])
 async def get_daily_missions(telegram_id: str, db: Session = Depends(get_db)):

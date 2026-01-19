@@ -9,7 +9,7 @@ from models.user import User
 from datetime import datetime
 import uuid
 
-router = APIRouter(prefix="/referrals", tags=["Referrals"])
+router = APIRouter(tags=["Referrals"])
 
 def get_db_session():
     db = next(get_db())
