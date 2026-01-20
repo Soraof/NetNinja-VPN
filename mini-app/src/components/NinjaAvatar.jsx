@@ -4,13 +4,13 @@ const NinjaAvatar = ({ status = 'normal', level = 1, className = '' }) => {
     const [currentImage, setCurrentImage] = useState('/assets/emotions/ninja_normal.gif');
 
     const statusImages = {
-        normal: '/assets/emotions/ninja_normal.gif',
-        active: '/assets/emotions/ninja_active.gif',
-        protect: '/assets/emotions/ninja_protect.gif',
-        sleep: '/assets/emotions/ninja_sleep.gif',
-        celebrate: '/assets/emotions/ninja_celebrate.gif',
-        stealth: '/assets/emotions/ninja_stealth.gif',
-        error: '/assets/emotions/ninja_error.gif'
+        normal: '/assets/animations/ninja_normal.gif',
+        active: '/assets/animations/ninja_active.gif',
+        protect: '/assets/animations/ninja_protect.gif',
+        sleep: '/assets/animations/ninja_sleep.gif',
+        celebrate: '/assets/animations/ninja_celebrate.gif',
+        stealth: '/assets/animations/ninja_stealth.gif',
+        error: '/assets/animations/ninja_error.gif'
     };
 
     useEffect(() => {

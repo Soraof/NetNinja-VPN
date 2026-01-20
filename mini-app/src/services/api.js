@@ -28,7 +28,8 @@ class ApiService {
         }
     }
 
-    // Auth
+    // ====== АУТЕНТИФИКАЦИЯ ======
+    
     async authenticate(initData) {
         return this.request('/auth/auth/', {
             method: 'POST',
@@ -36,7 +37,8 @@ class ApiService {
         });
     }
 
-    // User Profile
+    // ====== ПОЛЬЗОВАТЕЛЬ ======
+    
     async getUserProfile(telegramId) {
         return this.request(`/user/profile/${telegramId}`);
     }
@@ -52,7 +54,12 @@ class ApiService {
         return this.request(`/user/level/${telegramId}`);
     }
 
-    // VPN Operations
+    async getUserStats(telegramId) {
+        return this.request(`/user/stats/${telegramId}`);
+    }
+
+    // ====== VPN ======
+    
     async createVPNConnection(data) {
         return this.request('/vpn/create', {
             method: 'POST',
@@ -64,7 +71,8 @@ class ApiService {
         return this.request(`/vpn/config/${userId}`);
     }
 
-    // Payments
+    // ====== ПЛАТЕЖИ ======
+    
     async processPaymentWebhook(data) {
         return this.request('/payments/webhook', {
             method: 'POST',
@@ -72,7 +80,8 @@ class ApiService {
         });
     }
 
-    // Missions
+    // ====== МИССИИ ======
+    
     async getDailyMissions(telegramId) {
         return this.request(`/missions/daily/${telegramId}`);
     }
@@ -83,7 +92,8 @@ class ApiService {
         });
     }
 
-    // Referrals
+    // ====== РЕФЕРАЛЫ ======
+    
     async getReferralLink(telegramId) {
         return this.request(`/referrals/${telegramId}`);
     }
@@ -93,6 +103,44 @@ class ApiService {
             method: 'POST',
             body: JSON.stringify(data)
         });
+    }
+
+    // ====== УТИЛИТЫ ======
+    
+    // Методы, которых НЕТ в бекенде (возвращаем моки или бросаем ошибку)
+    async getCurrentUser() {
+        throw new Error('Метод getCurrentUser не реализован в бекенде. Используйте getUserProfile(telegramId)');
+    }
+
+    async getVpnStatus() {
+        return {
+            connected: false,
+            server: null,
+            connected_since: null,
+            traffic_today_mb: 0
+        };
+    }
+
+    async disconnectVpn() {
+        return { success: true, message: 'Mock disconnect' };
+    }
+
+    async getAvailableServers() {
+        return [
+            {
+                id: 1,
+                name: 'Tokyo Shadows',
+                country: 'JP',
+                flag: '🇯🇵',
+                load: 35,
+                latency: 45,
+                premium: false
+            }
+        ];
+    }
+
+    async getBalance() {
+        return { stars: 2850, ryo: 5000 };
     }
 }
 

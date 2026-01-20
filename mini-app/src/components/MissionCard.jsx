@@ -12,10 +12,10 @@ const MissionCard = ({ mission, onComplete }) => {
 
     const getRewardIcon = (rewardType) => {
         switch(rewardType) {
-            case 'stars': return '/assets/icons/rewards/icon_stars.png';
-            case 'shuriken': return '/assets/icons/rewards/icon_shuriken.png';
-            case 'medal': return '/assets/icons/rewards/icon_medal.png';
-            default: return '/assets/icons/rewards/icon_ryo.png';
+            case 'stars': return '/assets/icons/interface/icon_stars.png';
+            case 'shuriken': return '/assets/icons/interface/icon_shuriken.png';
+            case 'medal': return '/assets/icons/interface/icon_medal.png';
+            default: return '/assets/icons/interface/icon_ryo.png';
         }
     };
 

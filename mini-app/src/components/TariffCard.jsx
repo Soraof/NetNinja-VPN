@@ -1,10 +1,10 @@
 const TariffCard = ({ plan, onSelect, isSelected = false }) => {
     const getPlanIcon = (name) => {
         switch(name.toLowerCase()) {
-            case 'shadow': return '/assets/icons/functions/icon_stealth.png';
-            case 'warrior-shadow': return '/assets/icons/functions/icon_vpn.png';
-            case 'demon': return '/assets/icons/functions/icon_shield.png';
-            case 'legend': return '/assets/icons/rewards/icon_medal.png';
+            case 'shadow': return '/assets/icons/interface/icon_stealth.png';
+            case 'warrior-shadow': return '/assets/icons/interface/icon_vpn.png';
+            case 'demon': return '/assets/icons/interface/icon_shield.png';
+            case 'legend': return '/assets/icons/interface/icon_medal.png';
             default: return '/assets/icons/interface/icon_shop.png';
         }
     };
