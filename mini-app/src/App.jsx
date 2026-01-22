@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState } from 'preact/hooks';
-import { Suspense, lazy } from 'preact/compat'; // ✅ Правильно!
+import { Suspense, lazy } from 'preact/compat';
 
 // Ленивая загрузка страниц с fallback при ошибке
 const Dashboard = lazy(() => import('./pages/Dashboard').catch(() => () => <ErrorPage name="Dashboard" />));
@@ -13,7 +13,7 @@ const Help = lazy(() => import('./pages/Help').catch(() => () => <ErrorPage name
 function ErrorPage({ name }) {
   return (
     <div style={{ padding: '20px', color: 'red' }}>
-      ❌ Ошибка загрузки: {name}. Проверь файл <code>src/pages/{name}.jsx</code>
+      ❌mistake: {name}. check the file <code>src/pages/{name}.jsx</code>
     </div>
   );
 }

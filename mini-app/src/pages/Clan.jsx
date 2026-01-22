@@ -17,7 +17,6 @@ const Clan = () => {
     if (user?.id) {
       loadReferralInfo();
     } else {
-      // Mock-данные для разработки
       setTimeout(() => {
         setReferralLink('https://t.me/netninja_vpn?start=123456789');
         setReferralStats({
@@ -33,7 +32,6 @@ const Clan = () => {
   const loadReferralInfo = async () => {
     try {
       setLoading(true);
-      // Предположим, что у тебя есть эти эндпоинты
       const link = await apiService.getReferralLink(user.id);
       const stats = await apiService.getReferralStats?.(user.id) || {
         total_referrals: 0,
@@ -45,7 +43,6 @@ const Clan = () => {
       setReferralStats(stats);
     } catch (error) {
       console.error('Failed to load referral info:', error);
-      // Mock при ошибке
       setReferralLink('https://t.me/netninja_vpn?start=mock123');
       setReferralStats({ total_referrals: 3, active_users: 2, earned_rewards: 150 });
     } finally {

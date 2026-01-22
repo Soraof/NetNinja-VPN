@@ -1,6 +1,6 @@
 // src/assets.js
 
-// Анимации
+// Animations
 export const animations = {
     loading: new URL('./assets/animations/loading_ninja_smoke.gif', import.meta.url).href,
     normal: new URL('./assets/animations/ninja_normal.gif', import.meta.url).href,
@@ -12,7 +12,7 @@ export const animations = {
     error: new URL('./assets/animations/ninja_error.gif', import.meta.url).href,
 };
 
-// Аватары
+// Avatars
 export const avatars = {
     rookie: new URL('./assets/avatars/avatar_rookie.png', import.meta.url).href,
     warrior: new URL('./assets/avatars/avatar_warrior.png', import.meta.url).href,
@@ -21,7 +21,7 @@ export const avatars = {
     legend: new URL('./assets/avatars/avatar_legend.png', import.meta.url).href,
 };
 
-// Иконки
+// icons
 export const icons = {
     interface: {
         mission: new URL('./assets/icons/interface/icon_mission.png', import.meta.url).href,
@@ -46,12 +46,12 @@ export const icons = {
     },
 };
 
-// Логотипы
+// Logos
 export const logo = {
     full: new URL('./assets/logo/logo_full.png', import.meta.url).href,
     icon: new URL('./assets/logo/logo_icon.png', import.meta.url).href,
     favicon: new URL('./assets/logo/favicon.ico', import.meta.url).href,
 };
 
-// Фон
+//background
 export const bgDark = new URL('./assets/bg_dark.png', import.meta.url).href;

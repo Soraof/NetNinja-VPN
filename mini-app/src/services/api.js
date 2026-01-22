@@ -28,7 +28,7 @@ class ApiService {
         }
     }
 
-    // ====== АУТЕНТИФИКАЦИЯ ======
+  // ====== AUTHENTICATION ======
     
     async authenticate(initData) {
         return this.request('/auth/auth/', {
@@ -37,7 +37,7 @@ class ApiService {
         });
     }
 
-    // ====== ПОЛЬЗОВАТЕЛЬ ======
+   // ====== USER ======
     
     async getUserProfile(telegramId) {
         return this.request(`/user/profile/${telegramId}`);
@@ -71,7 +71,7 @@ class ApiService {
         return this.request(`/vpn/config/${userId}`);
     }
 
-    // ====== ПЛАТЕЖИ ======
+    // ====== PAYMENTS ======
     
     async processPaymentWebhook(data) {
         return this.request('/payments/webhook', {
@@ -80,7 +80,7 @@ class ApiService {
         });
     }
 
-    // ====== МИССИИ ======
+ // ====== MISSIONS ======
     
     async getDailyMissions(telegramId) {
         return this.request(`/missions/daily/${telegramId}`);
@@ -92,7 +92,7 @@ class ApiService {
         });
     }
 
-    // ====== РЕФЕРАЛЫ ======
+  // ====== REFERRALS ======
     
     async getReferralLink(telegramId) {
         return this.request(`/referrals/${telegramId}`);
@@ -105,9 +105,9 @@ class ApiService {
         });
     }
 
-    // ====== УТИЛИТЫ ======
+// ====== UTILITIES ======
     
-    // Методы, которых НЕТ в бекенде (возвращаем моки или бросаем ошибку)
+
     async getCurrentUser() {
         throw new Error('Метод getCurrentUser не реализован в бекенде. Используйте getUserProfile(telegramId)');
     }

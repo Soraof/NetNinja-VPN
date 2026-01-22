@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   root: resolve(__dirname),
-  publicDir: 'public', // ← относительный путь!
+  publicDir: 'public', 
   plugins: [preact()],
   server: {
     host: '127.0.0.1',
