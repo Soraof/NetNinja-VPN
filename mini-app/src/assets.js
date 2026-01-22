@@ -39,10 +39,10 @@ export const icons = {
         stealth: new URL('./assets/icons/functions/icon_stealth.png', import.meta.url).href,
     },
     rewards: {
-        ryo: new URL('./assets/icons/rewards/icon_ryo.png', import.meta.url).href,
-        stars: new URL('./assets/icons/rewards/icon_stars.png', import.meta.url).href,
-        shuriken: new URL('./assets/icons/rewards/icon_shuriken.png', import.meta.url).href,
-        medal: new URL('./assets/icons/rewards/icon_medal.png', import.meta.url).href,
+        ryo: new URL('./assets/icons/interface/icon_ryo.png', import.meta.url).href,
+        stars: new URL('./assets/icons/interface/icon_stars.png', import.meta.url).href,
+        shuriken: new URL('./assets/icons/interface/icon_shuriken.png', import.meta.url).href,
+        medal: new URL('./assets/icons/interface/icon_medal.png', import.meta.url).href,
     },
 };
 

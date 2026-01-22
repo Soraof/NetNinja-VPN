@@ -65,7 +65,7 @@ const Clan = () => {
   const shareLink = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Join NetNinja VPN',
+        title: 'Join NetNinja',
         text: 'Protect your privacy with me using NetNinja VPN!',
         url: referralLink
       }).catch(console.error);
@@ -133,21 +133,21 @@ const Clan = () => {
           <div className="space-y-3">
             <div className="flex justify-between items-center p-3 bg-ninja-gray rounded">
               <div className="flex items-center space-x-2">
-                <img src="/assets/icons/rewards/icon_stars.png" alt="Stars" className="w-5 h-5" />
+                <img src="./assets/icons/interface/icon_stars.png" alt="Stars" className="w-5 h-5" />
                 <span>First Referral</span>
               </div>
               <span className="text-ninja-yellow font-semibold">+50 ⭐</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-ninja-gray rounded">
               <div className="flex items-center space-x-2">
-                <img src="/assets/icons/rewards/icon_stars.png" alt="Stars" className="w-5 h-5" />
+                <img src="./assets/icons/interface/icon_stars.png" alt="Stars" className="w-5 h-5" />
                 <span>5 Active Referrals</span>
               </div>
               <span className="text-ninja-yellow font-semibold">+200 ⭐</span>
             </div>
             <div className="flex justify-between items-center p-3 bg-ninja-gray rounded">
               <div className="flex items-center space-x-2">
-                <img src="/assets/icons/rewards/icon_stars.png" alt="Stars" className="w-5 h-5" />
+                <img src="./assets/icons/interface/icon_stars.png" alt="Stars" className="w-5 h-5" />
                 <span>Monthly Bonus</span>
               </div>
               <span className="text-ninja-yellow font-semibold">+10 ⭐/user</span>

@@ -3,6 +3,7 @@ import TariffCard from '../components/TariffCard';
 import { apiService } from '../services/api';
 import { useTelegramAuth } from '../hooks/useTelegramAuth';
 
+
 const Arsenal = () => {
     const { user, openInvoice } = useTelegramAuth();
     const [selectedPlan, setSelectedPlan] = useState(null);
@@ -108,8 +109,8 @@ const Arsenal = () => {
                 {/* Payment Info */}
                 <div className="ninja-card p-4">
                     <div className="flex items-center space-x-2 mb-2">
-                        <img src="/assets/icons/rewards/icon_stars.png" alt="Stars" className="w-5 h-5" />
-                        <h3 className="font-bold">Payment with Telegram Stars</h3>
+                        <img src="./assets/icons/interface/icon_stars.png" alt="Stars" className="w-5 h-5" />
+                        <h3 className="">Payment with Telegram Stars</h3>
                     </div>
                     <p className="text-sm text-gray-300">
                         Secure and anonymous payments through Telegram's built-in payment system.

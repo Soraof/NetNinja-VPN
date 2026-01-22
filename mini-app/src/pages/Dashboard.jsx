@@ -182,7 +182,7 @@ const Dashboard = () => {
                     <div className="ninja-card p-4 text-center">
                         <div className="text-2xl font-bold text-ninja-yellow flex items-center justify-center gap-1">
                             <img 
-                                src="/assets/icons/rewards/icon_ryo.png" 
+                                src="./assets/icons/interface/icon_ryo.png" 
                                 alt="Ryo"
                                 className="w-6 h-6"
                             />
@@ -193,7 +193,7 @@ const Dashboard = () => {
                     <div className="ninja-card p-4 text-center">
                         <div className="text-2xl font-bold text-ninja-green flex items-center justify-center gap-1">
                             <img 
-                                src="/assets/icons/rewards/icon_stars.png" 
+                                src="./assets/icons/interface/icon_stars.png" 
                                 alt="Stars"
                                 className="w-6 h-6"
                             />
@@ -204,7 +204,7 @@ const Dashboard = () => {
                     <div className="ninja-card p-4 text-center">
                         <div className="text-2xl font-bold text-ninja-pink flex items-center justify-center gap-1">
                             <img 
-                                src="/assets/icons/rewards/icon_shuriken.png" 
+                                src="./assets/icons/interface/icon_shuriken.png" 
                                 alt="Missions"
                                 className="w-6 h-6"
                             />
