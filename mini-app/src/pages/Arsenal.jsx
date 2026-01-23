@@ -48,7 +48,7 @@ const Arsenal = () => {
         try {
             // Here you would call your backend to create an invoice
             // For now, we'll simulate the process
-            const invoiceUrl = `https://t.me/netninja_vpn_bot/app?startapp=buy_${plan.id}`;
+            const invoiceUrl = `https://t.me/NetN1nja_bot/app?startapp=buy_${plan.id}`;
             
             // Open Telegram invoice
             if (window.Telegram?.WebApp) {

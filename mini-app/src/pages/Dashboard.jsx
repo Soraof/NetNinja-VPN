@@ -106,9 +106,9 @@ const Dashboard = () => {
             <div className="min-h-screen flex items-center justify-center bg-ninja-bg">
                 <div className="text-center">
                     <img 
-                        src="/assets/animations/loading_ninja_smoke.gif" 
+                        src="./assets/animations/loading_ninja_smoke.gif" 
                         alt="Loading"
-                        className="w-32 h-32 mx-auto mb-4"
+                        className="w-60 h-60 mx-auto mb-4"
                     />
                     <p className="text-gray-400">Authenticating...</p>
                 </div>
@@ -122,11 +122,11 @@ const Dashboard = () => {
             <div className="p-4 border-b border-ninja-gray">
                 <h1 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
                     <img 
-                        src="/assets/logo/logo_icon.png" 
+                        src="./assets/logo/logo_icon.png" 
                         alt="Logo"
                         className="w-6 h-6"
                     />
-                    NetNinja
+                    NetN1nja
                 </h1>
             </div>
 
@@ -134,7 +134,7 @@ const Dashboard = () => {
             <div className="p-4 space-y-4">
                 {/* Ninja Avatar Section */}
                 <div className="text-center">
-                    <NinjaAvatar 
+                    <N1njaAvatar 
                         status={connectionStatus.isConnected ? 'protect' : 'normal'} 
                         level={userData?.level || 1}
                         className="mx-auto"
