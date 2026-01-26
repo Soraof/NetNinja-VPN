@@ -2,69 +2,198 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetNinja - Secure & Fast Connection</title>
-    <meta name="description" content="Premium VPN service with stealth technology">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0a14">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NetN1nja">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true">
+    
+    <title>NetN1nja</title>
+    <meta name="description" content="Premium VPN service with stealth technology">
     
     <!-- Icons -->
-<link rel="icon" href="/assets/icons/interface/icon_profile.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/interface/icon_profile.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/interface/icon_profile.png">
+    <link rel="apple-touch-icon" href="/assets/icons/interface/icon_profile.png">
     
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Styles will be injected by Vite -->
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js?1"></script>
+    
     <style>
-        /* Minimal fallback styles */
-        body {
+        /* Reset и улучшенные стили для мобильных */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #0a0a14;
             color: white;
-            min-height: 100vh;
             overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+            position: relative;
+        }
+        
+        body {
+            min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport height */
+            position: relative;
         }
         
         #app {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
         
+        /* Улучшенный стиль загрузки */
         .loading {
             display: flex;
             align-items: center;
             justify-content: center;
             flex: 1;
+            min-height: 100vh;
+            min-height: 100dvh;
             font-size: 18px;
             color: #8B5CF6;
+            background: linear-gradient(135deg, #0a0a14 0%, #1a1a2e 100%);
+        }
+        
+        .loading-content {
+            text-align: center;
+            padding: 20px;
         }
         
         .loading-spinner {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border: 4px solid rgba(139, 92, 246, 0.2);
             border-top: 4px solid #8B5CF6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-right: 12px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        
+        .loading-text {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .loading-subtext {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 8px;
         }
         
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Плавный переход при загрузке */
+        .app-loaded #app {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Убираем мерцание при загрузке */
+        #app:not(.loaded) {
+            opacity: 0;
+        }
+        
+        /* Улучшенная прокрутка для iOS */
+        .scroll-container {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+        
+        /* Убираем стандартные стили прокрутки */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        
+        /* Улучшенные стили для Telegram Mini App */
+        .tg-container {
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Улучшенная производительность рендеринга */
+        .gpu-accelerated {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
+        /* Убираем анимации для пользователей с предпочтением уменьшения движения */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="loading">
-            <div class="loading-spinner"></div>
-            <span>Loading NetNinja...</span>
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading NetN1nja</div>
+                <div class="loading-subtext">Securing your connection...</div>
+            </div>
         </div>
     </div>
+    
+    <script>
+        // Улучшенная загрузка приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем, в Telegram ли мы
+            if (window.Telegram?.WebApp) {
+                // Устанавливаем цвет статус бара
+                window.Telegram.WebApp.setHeaderColor('#0a0a14');
+                window.Telegram.WebApp.setBackgroundColor('#0a0a14');
+            }
+            
+            // Улучшенная обработка загрузки
+            const appDiv = document.getElementById('app');
+            
+            // Показываем приложение после загрузки основных скриптов
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    appDiv.classList.add('loaded');
+                }, 100);
+            });
+            
+            // Улучшенная обработка ошибок
+            window.addEventListener('error', function(e) {
+                console.error('Application error:', e.error);
+            });
+        });
+    </script>
     
     <!-- Script will be injected by Vite -->
     <script type="module" src="/src/main.jsx"></script>

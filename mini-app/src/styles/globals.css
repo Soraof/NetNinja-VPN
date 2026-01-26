@@ -21,7 +21,7 @@ body {
 
 .ninja-button {
     transition: all 0.3s ease;
-    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    background: linear-gradient(135deg, #966ff0, #7C3AED);
     border: none;
     border-radius: 12px;
     padding: 12px 24px;
@@ -31,7 +31,7 @@ body {
 
 .ninja-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 8px 25px rgba(93, 64, 160, 0.3);
 }
 
 .ninja-button:active {
@@ -41,11 +41,11 @@ body {
 .stealth-bar {
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(90deg, #10B981, #3B82F6, #8B5CF6);
+    background: linear-gradient(90deg, #82c215, #3B82F6, #8B5CF6);
 }
 
 .level-progress {
     height: 6px;
     border-radius: 3px;
-    background: linear-gradient(90deg, #8B5CF6, #EC4899);
+    background: linear-gradient(90deg, #8B5CF6, #ef59a4);
 }

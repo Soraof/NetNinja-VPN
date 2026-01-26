@@ -13,116 +13,216 @@ const Dashboard = () => {
         ping: 0,
         traffic: 0
     });
+    const [showLoading, setShowLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (user && isAuthenticated) {
             loadUserData();
-            // loadVpnStatus(); // Метода нет в бекенде
         }
     }, [user, isAuthenticated]);
 
     const loadUserData = async () => {
+        if (isLoading) return;
+        setIsLoading(true);
+        setError(null);
+
         try {
-            // Используем правильный метод с telegramId
-            const profile = await apiService.getUserProfile(user.id);
-            setUserData(profile);
-        } catch (error) {
-            console.error('Failed to load user profile:', error);
-            // Fallback данные если API не доступен
+            console.log('Loading user data for:', user?.id);
+            
+            // Загружаем все данные параллельно
+            const [profileRes, statsRes, missionsRes] = await Promise.allSettled([
+                apiService.getUserProfile(),
+                apiService.getUserStats(),
+                apiService.getDailyMissions()
+            ]);
+
+            const processedData = {
+                id: user?.id,
+                username: user?.first_name || 'Ninja',
+                level: 1,
+                xp: 0,
+                xp_to_next_level: 1000,
+                stealth_level: 50,
+                balance: 0,
+                ryo: 0,
+                missions_completed: 0,
+                clan: 'No Clan',
+                total_connections: 0,
+                daily_streak: 0
+            };
+
+            // Обработка профиля
+            if (profileRes.status === 'fulfilled' && profileRes.value) {
+                const profile = profileRes.value;
+                processedData.username = profile.username || profile.first_name || user?.first_name || 'Ninja';
+                processedData.level = profile.level || 1;
+                processedData.clan = profile.clan_name || profile.clan || 'No Clan';
+                processedData.id = profile.telegram_id || user?.id;
+            }
+
+            // Обработка статистики
+            if (statsRes.status === 'fulfilled' && statsRes.value) {
+                const stats = statsRes.value;
+                processedData.xp = stats.current_xp || stats.xp || 0;
+                processedData.xp_to_next_level = stats.xp_to_next_level || 1000;
+                processedData.stealth_level = stats.stealth_level || stats.stealth || 50;
+                processedData.balance = stats.balance || stats.currency_balance || 0;
+                processedData.ryo = stats.currency_balance || stats.ryo || 0;
+                processedData.total_connections = stats.total_connections || 0;
+                processedData.daily_streak = stats.daily_streak || 0;
+            }
+
+            // Обработка миссий
+            if (missionsRes.status === 'fulfilled' && missionsRes.value) {
+                const missions = Array.isArray(missionsRes.value) ? missionsRes.value : [];
+                processedData.missions_completed = missions.filter(m => m.completed || m.is_completed).length;
+            }
+
+            setUserData(processedData);
+            console.log('Loaded user data:', processedData);
+            
+        } catch (err) {
+            console.error('Failed to load user data:', err);
+            setError(err.message);
+            
+            // Fallback данные
             setUserData({
                 id: user?.id,
                 username: user?.first_name || 'Ninja',
                 level: 1,
-                xp: 250,
+                xp: 0,
                 xp_to_next_level: 1000,
-                stealth_level: 65,
-                balance: 500,
-                missions_completed: 3,
-                ryo: 1500,
-                clan: 'Shadow Clan'
+                stealth_level: 50,
+                balance: 0,
+                ryo: 0,
+                missions_completed: 0,
+                clan: 'No Clan',
+                total_connections: 0,
+                daily_streak: 0
             });
+        } finally {
+            setIsLoading(false);
+            // Убираем загрузку через 2 секунды (или сразу, если данные загружены)
+            setTimeout(() => setShowLoading(false), 8000);
         }
     };
 
     const loadUserStats = async () => {
         try {
-            const stats = await apiService.getUserStats(user.id);
+            const stats = await apiService.getUserStats();
             console.log('User stats:', stats);
         } catch (error) {
-            console.log('User stats not available');
+            console.log('User stats not available:', error);
         }
     };
 
     const toggleConnection = async () => {
+        if (isLoading || !user) return;
+        setIsLoading(true);
+
         try {
+            console.log('Toggling connection, current status:', connectionStatus.isConnected);
+            
             if (connectionStatus.isConnected) {
-                // В бекенде нет метода disconnect, просто меняем состояние
-                setConnectionStatus(prev => ({ 
-                    ...prev, 
+                // Отключение VPN
+                await apiService.toggleVPNConnection(false);
+                setConnectionStatus({
                     isConnected: false,
                     ping: 0,
                     traffic: 0
-                }));
-            } else {
-                // Создаем VPN подключение через бекенд
-                const config = await apiService.createVPNConnection({
-                    telegram_id: user.id,
-                    public_key: 'mock_public_key_for_test' // В реальном приложении нужно генерировать
                 });
-                console.log('VPN config created:', config);
+            } else {
+                // Подключение VPN
+                const result = await apiService.createVPNConnection({
+                    telegram_id: user.id,
+                    server_id: 'default'
+                });
                 
-                setConnectionStatus(prev => ({ 
-                    ...prev, 
+                setConnectionStatus({
                     isConnected: true,
-                    ping: 45,
-                    traffic: 128
-                }));
+                    ping: result.ping || result.latency || 45,
+                    traffic: result.traffic || result.bytes_transferred || 128
+                });
             }
         } catch (error) {
             console.error('VPN operation failed:', error);
-            // Fallback: меняем состояние локально для демо
-            setConnectionStatus(prev => ({ 
-                ...prev, 
-                isConnected: !prev.isConnected,
-                ping: prev.isConnected ? 0 : 45,
-                traffic: prev.isConnected ? 0 : 128
-            }));
+            setError(error.message);
+            alert('VPN operation failed: ' + error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleGetVPNConfig = async () => {
+        if (isLoading || !user) return;
+        setIsLoading(true);
+
         try {
-            const config = await apiService.getVPNConfig(user.id);
+            const config = await apiService.getVPNConfig();
             console.log('VPN Config:', config);
-            // Здесь можно показать конфиг пользователю или скачать
-            alert('VPN config loaded (check console)');
+            
+            if (config && (config.config || config.config_content)) {
+                const configText = config.config || config.config_content;
+                await navigator.clipboard.writeText(configText);
+                alert('VPN config copied to clipboard!');
+            } else {
+                alert('No VPN config available');
+            }
         } catch (error) {
             console.error('Failed to get VPN config:', error);
+            setError(error.message);
+            alert('Failed to get VPN config: ' + error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    if (!isAuthenticated) {
+    // Экран загрузки
+    if (showLoading || isLoading || !isAuthenticated) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-ninja-bg">
-                <div className="text-center">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-ninja-bg">
+                <div className="text-center max-w-md mx-4">
                     <img 
-                        src="./assets/animations/loading_ninja_smoke.gif" 
+                        src="./assets/animations/meme.gif" 
                         alt="Loading"
-                        className="w-60 h-60 mx-auto mb-4"
+                        className="w-80 h-80 mx-auto mb-6 rounded-lg"
                     />
-                    <p className="text-gray-400">Authenticating...</p>
+                    
+                    <p className="text-gray-300 text-xl mb-3 font-ninja tracking-wider">
+                        {isLoading ? 'Loading Data...' : 'Entering Shadow Network...'}
+                    </p>
+                    
+                    <p className="text-gray-500 text-sm">
+                        Securing your connection with military-grade encryption
+                    </p>
+                    
+                    {error && (
+                        <p className="text-red-400 text-sm mt-2">{error}</p>
+                    )}
+                    
+                    {import.meta.env.DEV && (
+                        <button 
+                            onClick={() => setShowLoading(false)}
+                            className="mt-4 text-xs text-gray-500 hover:text-white px-3 py-1 border border-gray-700 rounded"
+                        >
+                            Skip Loading
+                        </button>
+                    )}
                 </div>
             </div>
         );
     }
 
+    // Основной интерфейс
     return (
-        <div className="min-h-screen bg-ninja-bg text-white">
+        <div className="min-h-screen bg-ninja-bg text-white pb-20">
             {/* Header */}
-            <div className="p-4 border-b border-ninja-gray">
+            <div className="p-4 border-b border-ninja-gray sticky top-0 bg-ninja-bg z-10">
                 <h1 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
                     <img 
-                        src="./assets/logo/logo_icon.png" 
+                        src="./assets/logo/logo.png" 
                         alt="Logo"
                         className="w-6 h-6"
                     />
@@ -134,7 +234,7 @@ const Dashboard = () => {
             <div className="p-4 space-y-4">
                 {/* Ninja Avatar Section */}
                 <div className="text-center">
-                    <N1njaAvatar 
+                    <NinjaAvatar 
                         status={connectionStatus.isConnected ? 'protect' : 'normal'} 
                         level={userData?.level || 1}
                         className="mx-auto"
@@ -148,6 +248,11 @@ const Dashboard = () => {
                     <p className="text-xs text-gray-400 mt-1">
                         ID: {user?.id || 'unknown'}
                     </p>
+                    {userData?.daily_streak > 0 && (
+                        <p className="text-xs text-ninja-yellow mt-1">
+                            🔥 {userData.daily_streak} day streak
+                        </p>
+                    )}
                 </div>
 
                 {/* Connection Status */}
@@ -157,20 +262,23 @@ const Dashboard = () => {
                 <div className="grid grid-cols-2 gap-3">
                     <button 
                         onClick={toggleConnection}
+                        disabled={isLoading}
                         className={`ninja-button py-3 text-center font-semibold flex items-center justify-center gap-2 ${
                             connectionStatus.isConnected 
                                 ? 'bg-red-600 hover:bg-red-700' 
                                 : 'bg-green-600 hover:bg-green-700'
-                        }`}
+                        } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <span className="text-xl">
-                            {connectionStatus.isConnected ? '🔌' : '🛡️'}
+                            {connectionStatus.isConnected ? '⚔️' : '🫥'}
                         </span>
-                        {connectionStatus.isConnected ? 'Disconnect' : 'Connect VPN'}
+                        {isLoading ? 'Loading...' : 
+                         connectionStatus.isConnected ? 'Disconnect' : 'Connect VPN'}
                     </button>
                     <button 
                         onClick={handleGetVPNConfig}
-                        className="ninja-button py-3 bg-ninja-blue text-center font-semibold hover:bg-ninja-blue/80 flex items-center justify-center gap-2"
+                        disabled={isLoading}
+                        className="ninja-button py-3 bg-ninja-blue text-center font-semibold hover:bg-ninja-blue/80 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <span className="text-xl">📁</span>
                         Get Config
@@ -223,9 +331,10 @@ const Dashboard = () => {
                         </span>
                         <button 
                             onClick={loadUserStats}
-                            className="text-xs px-2 py-1 bg-ninja-gray rounded hover:bg-ninja-purple/20"
+                            disabled={isLoading}
+                            className="text-xs px-2 py-1 bg-ninja-gray rounded hover:bg-ninja-purple/20 disabled:opacity-50"
                         >
-                            Stats
+                            Refresh
                         </button>
                     </div>
                     <div className="flex items-center gap-3 mb-3">
@@ -252,7 +361,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Stealth Meter */}
-                <StealthMeter stealthLevel={userData?.stealth_level || 65} />
+                <StealthMeter stealthLevel={userData?.stealth_level || 50} />
 
                 {/* Recent Activity */}
                 <div className="ninja-card p-4">
@@ -268,8 +377,8 @@ const Dashboard = () => {
                             </span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-300">Daily Login</span>
-                            <span className="text-ninja-yellow">+50 Ryo</span>
+                            <span className="text-gray-300">Total Connections</span>
+                            <span className="text-ninja-yellow">{userData?.total_connections || 0}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-300">Profile Updated</span>
@@ -278,15 +387,19 @@ const Dashboard = () => {
                     </div>
                 </div>
 
+                {/* Error Display */}
+                {error && (
+                    <div className="bg-red-900/20 border border-red-700 rounded-lg p-3 text-center">
+                        <p className="text-red-400 text-sm">Error: {error}</p>
+                    </div>
+                )}
+
                 {/* Developer Info */}
                 <div className="text-center text-xs text-gray-500 pt-4 border-t border-ninja-gray">
                     <p>User ID: {user?.id}</p>
                     <p className="mt-1">
                         <button 
-                            onClick={() => {
-                                console.log('User Data:', userData);
-                                console.log('Connection Status:', connectionStatus);
-                            }}
+                            onClick={() => console.log('State:', {userData, connectionStatus, user})}
                             className="text-ninja-purple hover:underline"
                         >
                             [Dev] Log State

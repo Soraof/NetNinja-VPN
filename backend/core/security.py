@@ -6,7 +6,7 @@ from typing import Dict, Any, Optional
 def validate_telegram_webapp_data(init_data: str, bot_token: str) -> bool:
     """
     Проверяем подпись initData от Telegram.
-    https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
+    https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app  
     """
     try:
         # 1. Парсим initData, игнорируя hash
@@ -21,22 +21,25 @@ def validate_telegram_webapp_data(init_data: str, bot_token: str) -> bool:
         sorted_items = sorted(parsed_items, key=lambda x: x[0])
         data_check_string = "\n".join([f"{key}={value}" for key, value in sorted_items])
 
-        # 3. Создаем телеграм-секрет
-        # secret_key = SHA256(BOT_TOKEN).digest()
+        # 3. Создаем секретный ключ (HMAC-SHA256 от bot_token)
         secret_key = hashlib.sha256(bot_token.encode()).digest()
 
-        # 4. Создаем секрет для вычисления хэша (HMAC-SHA256)
-        # telegram_secret = SHA256(secret_key).digest()
-        telegram_secret = hashlib.sha256(secret_key).digest()
+        # 4. Вычисляем HMAC-SHA256 подписи
+        calculated_hash = hmac.new(
+            secret_key, 
+            data_check_string.encode(), 
+            hashlib.sha256
+        ).hexdigest()
 
-        # 5. Вычисляем HMAC-SHA256 подписи
-        calculated_hash = hmac.new(telegram_secret, data_check_string.encode(), hashlib.sha256).hexdigest()
-
-        # 6. Находим оригинальный хэш из initData
+        # 5. Находим оригинальный хэш из initData
         original_hash = dict(parsed_items).get('hash')
 
-        # 7. Сравниваем
-        return calculated_hash == original_hash
+        # 6. Сравниваем
+        print(f"Calculated hash: {calculated_hash}")
+        print(f"Original hash: {original_hash}")
+        print(f"Data check string: {data_check_string}")
+        
+        return calculated_hash.lower() == original_hash.lower()
 
     except Exception as e:
         print(f"Error validating Telegram WebApp data: {e}")

@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'preact/hooks';
 
 const NinjaAvatar = ({ status = 'normal', level = 1, className = '' }) => {
-    const [currentImage, setCurrentImage] = useState('/assets/emotions/ninja_normal.gif');
+    const [currentImage, setCurrentImage] = useState('/assets/animations/muki3.gif');
 
     const statusImages = {
-        normal: '/assets/animations/ninja_normal.gif',
-        active: '/assets/animations/ninja_active.gif',
-        protect: '/assets/animations/ninja_protect.gif',
-        sleep: '/assets/animations/ninja_sleep.gif',
-        celebrate: '/assets/animations/ninja_celebrate.gif',
-        stealth: '/assets/animations/ninja_stealth.gif',
-        error: '/assets/animations/ninja_error.gif'
+        normal: '/assets/animations/miku3.gif',
+        active: '/assets/animations/miku7.gif',
+        protect: '/assets/animations/miku1.gif',
+        sleep: '/assets/animations/miku4.gif',
+        celebrate: '/assets/animations/miku5.gif',
+        stealth: '/assets/animations/miku6.gif',
+        error: '/assets/animations/miku2.gif'
     };
 
     useEffect(() => {

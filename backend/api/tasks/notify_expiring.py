@@ -1,40 +1,40 @@
 # backend/tasks/notify_expiring.py
-# from celery import Celery
-# from ...services.telegram_notifier import TelegramNotifier
-# from ...core.config import settings
-#
-# app = Celery('tasks', broker=settings.CELERY_BROKER_URL) # Нужно добавить в .env
-# notifier = TelegramNotifier(settings.TG_BOT_TOKEN)
-#
-# @app.task
-# def check_and_notify_expiring_subscriptions():
-#     """
-#     Фоновая задача: проверяет, у кого заканчивается подписка и отправляет уведомления.
-#     """
-#     from ...services.database import get_db
-#     from ...models.user import User
-#     from ...models.subscription import Subscription
-#     from datetime import datetime, timedelta
-#
-#     db_gen = get_db()
-#     db = next(db_gen)
-#     try:
-#         now = datetime.utcnow()
-#         # Найти активные подписки, заканчивающиеся в ближайшие N дней (например, 1)
-#         expiring_date = now + timedelta(days=1)
-#         expiring_subs = db.query(Subscription).filter(
-#             Subscription.is_active == True,
-#             Subscription.expires_at <= expiring_date,
-#             Subscription.expires_at > now
-#         ).all()
-#
-#         for sub in expiring_subs:
-#             user = db.query(User).filter(User.id == sub.user_id).first()
-#             if user:
-#                 days_left = (sub.expires_at - now).days + 1
-#                 notifier.notify_subscription_expiring(user.telegram_id, days_left)
-#
-#     finally:
-#         next(db_gen, None)
-#
-# # Запускать эту задачу раз в день через планировщик Celery
+from celery import Celery
+from core.config import settings
+from sqlalchemy.orm import Session
+from core.database import get_db
+from models.subscription import Subscription
+from services.telegram_notifier import send_notification
+
+celery = Celery(__name__)
+celery.conf.broker_url = settings.CELERY_BROKER_URL
+
+@celery.task
+def check_expiring_subscriptions():
+    """Проверяет истекающие подписки и отправляет уведомления"""
+    db: Session = next(get_db())
+    try:
+        # Найти подписки, которые истекают в ближайшие 3 дня
+        from datetime import datetime, timedelta
+        three_days_later = datetime.utcnow() + timedelta(days=3)
+        
+        expiring_subs = db.query(Subscription).filter(
+            Subscription.expires_at <= three_days_later,
+            Subscription.expires_at > datetime.utcnow(),
+            Subscription.notified_expiring == False
+        ).all()
+        
+        for sub in expiring_subs:
+            # Отправить уведомление пользователю
+            send_notification(
+                chat_id=sub.user.telegram_id,
+                message=f"⚠️ Ваша подписка истекает {sub.expires_at.strftime('%d.%m.%Y %H:%M')}. Пополните баланс!"
+            )
+            sub.notified_expiring = True
+        
+        db.commit()
+    except Exception as e:
+        print(f"Error in check_expiring_subscriptions: {e}")
+        db.rollback()
+    finally:
+        db.close()
