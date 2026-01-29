@@ -5,49 +5,83 @@ import { useTelegramAuth } from '../hooks/useTelegramAuth';
 const MyPassages = () => {
     const { user } = useTelegramAuth();
     const [vpnConfig, setVpnConfig] = useState(null);
+    const [availableServers, setAvailableServers] = useState([]);
+    const [currentServer, setCurrentServer] = useState(null);
     const [showQR, setShowQR] = useState(false);
     const [activeTab, setActiveTab] = useState('keys');
-
-    const loadVPNConfig = async () => {
-        try {
-            const config = await apiService.getVPNConfig(user.id);
-            setVpnConfig(config);
-        } catch (error) {
-            console.error('Failed to load VPN config:', error);
-        }
-    };
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (user) {
-            loadVPNConfig();
+            loadAllData();
         }
     }, [user]);
 
+    const loadAllData = async () => {
+        setIsLoading(true);
+        setError(null);
+        
+        try {
+            // Загружаем конфиг (без серверов, т.к. их пока нет)
+            const configRes = await apiService.getVPNConfig();
+            setVpnConfig(configRes);
+
+        } catch (err) {
+            console.error('Failed to load data:', err);
+            setError(err.message);
+            // Fallback для конфига
+            setVpnConfig({
+                public_key: 'not_generated_yet',
+                private_key: 'not_generated_yet',
+                config: '[Interface]\n# No configuration available yet'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const copyToClipboard = async (text) => {
+        if (!text) return;
+        
         try {
             await navigator.clipboard.writeText(text);
             alert('Copied to clipboard!');
         } catch (err) {
             console.error('Failed to copy: ', err);
+            alert('Failed to copy to clipboard');
         }
     };
 
     const generateQRCode = (config) => {
-        // In real implementation, you would use a QR code library
-        // For now, returning a placeholder
-        return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="white"/><text x="100" y="100" font-size="12" text-anchor="middle" dominant-baseline="middle">QR CODE PLACEHOLDER</text></svg>`;
+        if (!config || !config.config) {
+            return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="white"/><text x="100" y="100" font-size="12" text-anchor="middle" dominant-baseline="middle">No config available</text></svg>`;
+        }
+        
+        return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="white"/><text x="100" y="100" font-size="10" text-anchor="middle" dominant-baseline="middle">${encodeURIComponent(config.config.substring(0, 30))}...</text></svg>`;
     };
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-ninja-bg text-white flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ninja-purple mx-auto mb-4"></div>
+                    <p>Loading VPN data...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-ninja-bg text-white">
+        <div className="min-h-screen bg-ninja-bg text-white pb-20">
             {/* Header */}
-            <div className="p-4 border-b border-ninja-gray">
+            <div className="p-4 border-b border-ninja-gray sticky top-0 bg-ninja-bg z-10">
                 <h1 className="text-2xl font-bold text-center">🥷 My Passages</h1>
                 <p className="text-center text-gray-400 text-sm">Your VPN credentials</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-ninja-gray">
+            <div className="flex border-b border-ninja-gray sticky top-16 bg-ninja-bg z-10">
                 <button 
                     className={`flex-1 py-3 font-medium ${activeTab === 'keys' ? 'text-ninja-purple border-b-2 border-ninja-purple' : 'text-gray-400'}`}
                     onClick={() => setActiveTab('keys')}
@@ -68,6 +102,13 @@ const MyPassages = () => {
                 </button>
             </div>
 
+            {/* Error Display */}
+            {error && (
+                <div className="bg-red-900/20 border border-red-700 rounded-lg p-3 m-4 text-center">
+                    <p className="text-red-400 text-sm">Error: {error}</p>
+                </div>
+            )}
+
             {/* Tab Content */}
             <div className="p-4 space-y-4">
                 {activeTab === 'keys' && (
@@ -76,11 +117,11 @@ const MyPassages = () => {
                             <h3 className="font-bold mb-2">Public Key</h3>
                             <div className="flex items-center space-x-2">
                                 <code className="flex-1 bg-ninja-gray p-2 rounded text-sm break-all">
-                                    {vpnConfig?.public_key || 'Generating...'}
+                                    {vpnConfig?.public_key || vpnConfig?.peer?.public_key || 'Generating...'}
                                 </code>
                                 <button 
-                                    onClick={() => copyToClipboard(vpnConfig?.public_key || '')}
-                                    className="px-3 py-1 bg-ninja-purple rounded text-sm"
+                                    onClick={() => copyToClipboard(vpnConfig?.public_key || vpnConfig?.peer?.public_key || '')}
+                                    className="px-3 py-1 bg-ninja-purple rounded text-sm hover:bg-ninja-purple/80"
                                 >
                                     Copy
                                 </button>
@@ -91,11 +132,11 @@ const MyPassages = () => {
                             <h3 className="font-bold mb-2">Private Key</h3>
                             <div className="flex items-center space-x-2">
                                 <code className="flex-1 bg-ninja-gray p-2 rounded text-sm break-all">
-                                    {vpnConfig?.private_key ? '•'.repeat(44) : 'Generating...'}
+                                    {vpnConfig?.private_key ? '•'.repeat(28) : 'Generating...'}
                                 </code>
                                 <button 
                                     onClick={() => copyToClipboard(vpnConfig?.private_key || '')}
-                                    className="px-3 py-1 bg-ninja-purple rounded text-sm"
+                                    className="px-3 py-1 bg-ninja-purple rounded text-sm hover:bg-ninja-purple/80"
                                 >
                                     Copy
                                 </button>
@@ -116,7 +157,7 @@ const MyPassages = () => {
                             </div>
                             <button 
                                 onClick={() => setShowQR(!showQR)}
-                                className="w-full mt-3 py-2 bg-ninja-blue rounded text-sm"
+                                className="w-full mt-3 py-2 bg-ninja-blue rounded text-sm hover:bg-ninja-blue/80"
                             >
                                 {showQR ? 'Hide QR Code' : 'Show QR Code'}
                             </button>
@@ -129,13 +170,13 @@ const MyPassages = () => {
                         <div className="ninja-card p-4">
                             <h3 className="font-bold mb-2">WireGuard Config (.conf)</h3>
                             <textarea 
-                                value={vpnConfig?.config || '[Interface]\n# Configuration will be generated here'}
+                                value={vpnConfig?.config || vpnConfig?.config_content || '[Interface]\n# Configuration will be generated here'}
                                 readOnly
-                                className="w-full h-40 bg-ninja-gray p-2 rounded text-sm font-mono"
+                                className="w-full h-40 bg-ninja-gray p-2 rounded text-sm font-mono resize-none"
                             />
                             <button 
-                                onClick={() => copyToClipboard(vpnConfig?.config || '')}
-                                className="w-full mt-2 py-2 bg-ninja-purple rounded text-sm"
+                                onClick={() => copyToClipboard(vpnConfig?.config || vpnConfig?.config_content || '')}
+                                className="w-full mt-2 py-2 bg-ninja-purple rounded text-sm hover:bg-ninja-purple/80"
                             >
                                 Copy Config
                             </button>
@@ -144,10 +185,27 @@ const MyPassages = () => {
                         <div className="ninja-card p-4">
                             <h3 className="font-bold mb-2">Download Options</h3>
                             <div className="space-y-2">
-                                <button className="w-full py-2 bg-ninja-blue rounded text-sm">
+                                <button 
+                                    onClick={() => {
+                                        const element = document.createElement('a');
+                                        const file = new Blob([vpnConfig?.config || vpnConfig?.config_content || ''], { type: 'text/plain' });
+                                        element.href = URL.createObjectURL(file);
+                                        element.download = 'netninja.conf';
+                                        document.body.appendChild(element);
+                                        element.click();
+                                        document.body.removeChild(element);
+                                    }}
+                                    className="w-full py-2 bg-ninja-blue rounded text-sm hover:bg-ninja-blue/80"
+                                >
                                     Download .conf file
                                 </button>
-                                <button className="w-full py-2 bg-ninja-purple rounded text-sm">
+                                <button 
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(vpnConfig?.config || vpnConfig?.config_content || '');
+                                        alert('Config copied to clipboard. You can now import it to WireGuard app.');
+                                    }}
+                                    className="w-full py-2 bg-ninja-purple rounded text-sm hover:bg-ninja-purple/80"
+                                >
                                     Import to WireGuard app
                                 </button>
                             </div>
@@ -159,38 +217,9 @@ const MyPassages = () => {
                     <div className="space-y-4">
                         <div className="ninja-card p-4">
                             <h3 className="font-bold mb-3">Available Servers</h3>
-                            <div className="space-y-3">
-                                {[
-                                    { id: 'us-east', name: 'United States (East)', ping: '25ms', status: 'online' },
-                                    { id: 'us-west', name: 'United States (West)', ping: '45ms', status: 'online' },
-                                    { id: 'eu-central', name: 'Europe (Central)', ping: '35ms', status: 'online' },
-                                    { id: 'asia-singapore', name: 'Asia (Singapore)', ping: '85ms', status: 'online' },
-                                    { id: 'south-america', name: 'South America', ping: '120ms', status: 'online' }
-                                ].map(server => (
-                                    <div key={server.id} className="flex items-center justify-between p-3 bg-ninja-gray rounded">
-                                        <div>
-                                            <div className="font-medium">{server.name}</div>
-                                            <div className="text-sm text-gray-400">{server.ping}</div>
-                                        </div>
-                                        <div className={`px-2 py-1 rounded text-xs ${
-                                            server.status === 'online' ? 'bg-green-600' : 'bg-red-600'
-                                        }`}>
-                                            {server.status.toUpperCase()}
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="text-center py-8 text-gray-400">
+                                Server functionality coming soon...
                             </div>
-                        </div>
-
-                        <div className="ninja-card p-4">
-                            <h3 className="font-bold mb-2">Current Server</h3>
-                            <div className="p-3 bg-ninja-gray rounded">
-                                <div className="font-medium">United States (East)</div>
-                                <div className="text-sm text-green-400">Connected • 25ms ping</div>
-                            </div>
-                            <button className="w-full mt-3 py-2 bg-ninja-purple rounded text-sm">
-                                Change Server
-                            </button>
                         </div>
                     </div>
                 )}
