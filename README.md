@@ -1,68 +1,66 @@
-
-
 # NetNinja VPN
 
-> Геймифицированный VPN-сервис внутри Telegram. Ниндзя-стайл, WireGuard, Go + FastAPI.
+> A gamified VPN service inside Telegram. Ninja style, WireGuard, Go + FastAPI.
 
-**Статус:** MVP готов. Ядро работает. Проект в заморозке после активной фазы.
-
----
-
-## 🧠 Что это
-
-VPN с прокачкой персонажа, миссиями и рефералкой. Всё внутри Telegram Mini App.
+**Status:** The MVP is ready. The core is working. The project is frozen after the active phase.
 
 ---
 
-## 📁 Структура
+## 🧠 What is it
 
-```
+VPN with character leveling, missions, and referral. Everything is inside the Telegram Mini App.
+
+---
+
+## 📁 Structure
+
+``
 netninja-vpn/
-├── bot/               # Telegram-бот (aiogram) — уведомления
-├── backend/           # FastAPI + PostgreSQL — основная логика
-├── vpn-service/       # Go + wireguard — управление ключами
-├── mini-app/          # Preact + Tailwind — интерфейс
-├── admin-panel/       # FastAPI + Jinja2 + HTMX — админка
-├── infra/             # Docker, Ansible, скрипты
-└── docs/              # Документация
+├── bot/ # Telegram-bot (aiogram) — notifications
+├── backend/           # FastAPI + PostgreSQL — basic logic
+─── vpn-service/ # Go + wireguard — key management
+,── mini-app/ # Preact + Tailwind interface
+├── admin-panel/       # FastAPI + Jinja2 + HTMX — admin panel
+,── infra/ # Docker, Ansible, scripts
+└── docs/              # Documentation
 ```
 
 ---
 
-## ⚙️ Технологии
+## ⚙️ Technologies
 
-| Компонент | Стек |
+| Component | Stack |
 |-----------|------|
-| Бекенд | Python / FastAPI / SQLAlchemy / PostgreSQL |
+| Backend | Python / FastAPI / SQLAlchemy / PostgreSQL |
 | VPN | Go / wireguard / wgctrl |
-| Фронт | Preact / Tailwind / Telegram SDK |
-| Бот | Python / aiogram |
-| Инфра | Docker / Docker Compose / Ansible |
+| Front | Preact / Tailwind / Telegram SDK |
+| Bot | Python / aiogram |
+| Infra | Docker / Docker Compose / Ansible |
 
 ---
 
-## ✨ Что сделано
+## ✨ What's done
 
-- **Go-микросервис** для WireGuard — 100% рабочее ядро
-- **Бекенд на FastAPI** — 95% готов, все эндпоинты
-- **Структура Mini App** — 6 страниц, геймификация
-- **Telegram Stars** — webhook для платежей
-- **Админ-панель** — управление пользователями и серверами
-- **Рефералка + миссии** — готовая логика
-- **Самозанятость** — оформление в процессе
+- **Go microservice** for WireGuard — 100% working core
+- **Backend on FastAPI** — 95% ready, all endpoints
+- **Mini App Structure** — 6 pages, gamification
+- **Telegram Stars** — webhook for payments
+- **Admin Panel** - User and server management
+- **Referral + missions** — ready logic
+- **Self—employment** - registration in progress
 
 ---
 
-## 🚀 Запуск
+## 🚀 Launch
 
 ```bash
-# Бекенд
+# Backend
 cd backend
 cp .env.example .env
 python -m uvicorn main:app --reload
 
-# Go-сервис
-cd vpn-service
+# Go-
+cd vpn service
 go run main.go
 
 # Mini App
@@ -75,32 +73,33 @@ Swagger: `http://127.0.0.1:8000/docs`
 
 ---
 
-## 📅 Хроника (январь 2026)
+## 📅 Chronicle (January 2026)
 
-> 9-10 / 30 картинок + гифки + структура бота — 4ч  
-> 10-11 / ядро VPN на Go — 100% готово — 1ч 50м  
-> 12-13 / бекенд 95% + самозанятость — 2ч  
-> 16-17 / бекенд полностью рабочий — 3ч  
-> 17-21 / фронтенд Mini App — 20+ч  
+> 9-10 / 30 images + gifs + bot structure — 4h  
+> 10-11 / VPN core on Go — 100% ready — 1h 50m  
+> 12-13 / backend 95% + self—employment - 2h  
+> 16-17 / backend is fully operational — 3h  
+> 17-21 / frontend Mini App — 20+hours  
 
-**Итого:** ~32 часа активной разработки за 12 дней.
+**Total:** ~32 hours of active development in 12 days.
 ---
 
->Проэкт был начат с использованием кусков кода из интернета, и некоторых частей кода с помощью ии
+>The project was started using pieces of code from the Internet, and some parts of the code using AI
 
->Проэкт не закончен по Причине Недостатка Времени(
-
----
-
-## 🔮 Дальше (до 10 марта)
-
-- [ ] ЮKassa в продакшен
-- [ ] Сборка всех частей в единую систему
-- [ ] Деплой на VPS
-- [ ] Тесты и доки
+>The project has not been completed due to Lack of Time(
 
 ---
 
-## 📄 Лицензия
+## 🔮 Next (until March 10th)
+
+- [ ] Yukassa in production
+- [ ] Assembling all parts into a single system
+- [ ] Deploy to VPS
+- [ ] Tests and docks
+
+---
+
+## 📄 License
 
 MIT
+
