@@ -48,8 +48,6 @@ netninja-vpn/
 - **FastAPI backend** — 95% ready, all endpoints
 - **Mini App structure** — 6 pages, gamification
 - **Telegram Stars** — webhook for payments
-- **Admin panel** — user & server management
-- **Referral + missions** — ready logic
 - **Self-employment** — registration in progress
 
 ---
