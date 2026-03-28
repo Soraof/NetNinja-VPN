@@ -3,6 +3,9 @@
 
 # NetNinja VPN
 
+<img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/4b63b565-fa10-40a5-9cb8-78ffbd99a928" />
+
+
 > A gamified VPN service inside Telegram. Ninja style, WireGuard, Go + FastAPI.
 
 **Status:** MVP is ready. Core is working. Project is on hold after the active phase.
