@@ -99,12 +99,12 @@ Swagger: `http://127.0.0.1:8000/docs`
 
 ---
 
-<img width="700" height="254" alt="image" src="https://github.com/user-attachments/assets/60a9605a-1d11-494b-8257-8c44740e8615" />
-
-
+Лецензия)
 
 MIT
 
 ---
+
+<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/803fb13c-79d2-40cb-9e21-6c56481b2fd6" />
 
 
