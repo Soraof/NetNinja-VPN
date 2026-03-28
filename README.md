@@ -3,8 +3,6 @@
 
 # NetNinja VPN
 
-<img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/4b63b565-fa10-40a5-9cb8-78ffbd99a928" />
-
 
 > A gamified VPN service inside Telegram. Ninja style, WireGuard, Go + FastAPI.
 
@@ -101,7 +99,9 @@ Swagger: `http://127.0.0.1:8000/docs`
 
 ---
 
-## 📄 License
+<img width="700" height="254" alt="image" src="https://github.com/user-attachments/assets/60a9605a-1d11-494b-8257-8c44740e8615" />
+
+
 
 MIT
 
