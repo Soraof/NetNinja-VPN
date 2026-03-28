@@ -85,7 +85,7 @@ Swagger: `http://127.0.0.1:8000/docs`
 
 **Total:** ~32 hours of active development in 12 days.
 
-> The project was started using pieces of code from the internet, and some parts using AI.  
+> The project was started using pieces of code from the internet.  
 > The project was not completed due to lack of time.
 
 ---
